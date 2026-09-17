@@ -38,8 +38,8 @@ allowed-tools:
 1. **Pre-flight** — `which before-and-after || npm install -g @vercel/before-and-after`
 2. **Protection check** — if `.vercel.app` URL: `curl -s -o /dev/null -w "%{http_code}" "<url>"` (401/403 = protected)
 3. **Capture** — `before-and-after "<before-url>" "<after-url>"`
-4. **Upload** — `./scripts/upload-and-copy.sh <before.png> <after.png> --markdown`
-5. **PR integration** — optionally `gh pr edit` to append markdown
+4. **Upload** — try `./scripts/upload-and-copy.sh <before.png> <after.png> --markdown` (default host is 0x0.st).
+5. **PR integration** — put GitHub-hosted image URLs in the PR body. If step 4 fails (0x0.st often refuses uploads), attach with `gh` instead. Do not leave `./foo.png` or `.artifacts/...` paths in the PR. GitHub cannot fetch your laptop.
 
 **Never skip steps 1-2.**
 
@@ -80,12 +80,27 @@ npx @vercel/before-and-after url1 url2
 
 ## Image Upload
 
-```bash
-# Default (0x0.st - no signup needed)
-./scripts/upload-and-copy.sh before.png after.png --markdown
+0x0.st is the CLI default and is often down or blocking uploads. A local path in the PR body will not render.
 
-# GitHub Gist
-IMAGE_ADAPTER=gist ./scripts/upload-and-copy.sh before.png after.png --markdown
+If `--markdown` / 0x0.st fails, attach files to GitHub with `gh` **2.99+** (`gh pr edit --help` must list `--attach`). Older `gh` (for example 2.67) has no flag. Download a newer binary if needed.
+
+```bash
+# Capture only. Keep the PNGs.
+npx @vercel/before-and-after "<before-url>" "<after-url>" -o .artifacts/<task>
+
+# After the PR exists, upload to GitHub and rewrite markdown that uses the same paths:
+gh pr edit <n> --body-file body.md \
+  --attach './before.png#Before' \
+  --attach './after.png#After'
+```
+
+`body.md` must reference the same paths you pass to `--attach` (`![Before](./before.png)`), or `gh` appends the images at the end instead of filling the table.
+
+`gh gist create` rejects PNG binaries. Do not use the gist adapter for screenshots.
+
+```bash
+# Default (0x0.st). Fine when it works. Not required.
+./scripts/upload-and-copy.sh before.png after.png --markdown
 ```
 
 ## Vercel Deployment Protection
@@ -105,14 +120,13 @@ which gh
 # Get current PR
 gh pr view --json number,body
 
-# Append screenshots to PR body
-gh pr edit <number> --body "<existing-body>
-
-## Before and After
-<generated-markdown>"
+# Host images on GitHub so they render in the description
+gh pr edit <number> --body-file body.md \
+  --attach './before.png#Before' \
+  --attach './after.png#After'
 ```
 
-If no `gh` CLI: output markdown and tell user to paste manually.
+If no `gh` CLI: output markdown and tell the user to paste and drag the PNGs into the GitHub UI.
 
 ## Error Reference
 
@@ -122,3 +136,4 @@ If no `gh` CLI: output markdown and tell user to paste manually.
 | `could not determine executable` | Use `npx @vercel/before-and-after` (full name) |
 | 401/403 on .vercel.app | See Vercel protection section |
 | Element not found | Verify selector exists on page |
+| 0x0.st upload refused / empty image in PR | Use `gh pr edit --attach` (gh 2.99+). Never paste local disk paths. |
