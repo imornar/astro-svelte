@@ -82,25 +82,29 @@ npx @vercel/before-and-after url1 url2
 
 0x0.st is the CLI default and is often down or blocking uploads. A local path in the PR body will not render.
 
+Never send customer data, credentials, or payment UI to 0x0.st. For those shots, skip `--markdown` and host them with `gh --attach` or `--upload-url` pointing at a private endpoint.
+
 If `--markdown` / 0x0.st fails, attach files to GitHub with `gh` **2.99+** (`gh pr edit --help` must list `--attach`). Older `gh` (for example 2.67) has no flag. Download a newer binary if needed.
 
+The CLI writes timestamped names under `-o`. Copy them to stable names in that same directory, then use those paths in both `body.md` and `--attach`.
+
 ```bash
-# Capture only. Keep the PNGs.
-npx @vercel/before-and-after "<before-url>" "<after-url>" -o .artifacts/<task>
+ART=.artifacts/<task>
+npx @vercel/before-and-after "<before-url>" "<after-url>" -o "$ART"
+cp "$ART"/*-before-*.png "$ART/before.png"
+cp "$ART"/*-after-*.png "$ART/after.png"
 
-# After the PR exists, upload to GitHub and rewrite markdown that uses the same paths:
+# body.md must use the same paths, e.g. ![Before](.artifacts/<task>/before.png)
 gh pr edit <n> --body-file body.md \
-  --attach './before.png#Before' \
-  --attach './after.png#After'
+  --attach "$ART/before.png#Before" \
+  --attach "$ART/after.png#After"
 ```
-
-`body.md` must reference the same paths you pass to `--attach` (`![Before](./before.png)`), or `gh` appends the images at the end instead of filling the table.
 
 `gh gist create` rejects PNG binaries. Do not use the gist adapter for screenshots.
 
 ```bash
-# Default (0x0.st). Fine when it works. Not required.
-./scripts/upload-and-copy.sh before.png after.png --markdown
+# Ordinary public UI only. Not for sensitive captures.
+./scripts/upload-and-copy.sh "$ART/before.png" "$ART/after.png" --markdown
 ```
 
 ## Vercel Deployment Protection
@@ -122,8 +126,8 @@ gh pr view --json number,body
 
 # Host images on GitHub so they render in the description
 gh pr edit <number> --body-file body.md \
-  --attach './before.png#Before' \
-  --attach './after.png#After'
+  --attach '.artifacts/<task>/before.png#Before' \
+  --attach '.artifacts/<task>/after.png#After'
 ```
 
 If no `gh` CLI: output markdown and tell the user to paste and drag the PNGs into the GitHub UI.

@@ -28,9 +28,12 @@ callouts; it also governs work in this repo itself.
 Ship-beat notes:
 
 - `/before-and-after` drives the `@vercel/before-and-after` CLI. Capture the
-  PNGs first. `--markdown` tries 0x0.st; that host often refuses uploads.
-  If it fails, put the shots on GitHub with `gh pr create` / `gh pr edit
-  --attach` (needs gh 2.99+). Local paths in the PR body will not render.
+  PNGs first. `--markdown` tries 0x0.st; that host is public and often
+  refuses uploads. Skip 0x0.st for customer, credential, or payment UI.
+  Use `gh --attach` (gh 2.99+) or `--upload-url` to a private host. If 0x0.st
+  fails on ordinary shots, use `gh pr create` / `gh pr edit --attach`. Local
+  paths in the PR body will not render. Use the files under `-o`, not
+  `./before.png` in the repo root.
 - In containers/VMs where Chrome fails with "No usable sandbox", set
   `AGENT_BROWSER_ARGS="--no-sandbox"` for the capture command.
 
