@@ -1,0 +1,20 @@
+---
+description: Isolate every new feature or fix in a Git worktree, then follow AGENTS.md before writing code
+alwaysApply: true
+---
+
+# Agent workflow (this repo)
+
+Before writing or editing code for a new feature, fix, or task:
+
+1. Read and follow `.cursor/skills/new-feature/SKILL.md`.
+2. Follow root `AGENTS.md` (isolate, build, prove, ship).
+
+Conventions:
+
+- Worktrees go in `.worktrees/`, branches are `agent/<task-name>`.
+- Never implement on `main`. Never reuse another agent's worktree or branch.
+- If Cursor already assigned a `worktree-*` checkout, keep that branch and
+  worktree; still do new-feature scope check, sync, and verify steps.
+- After the change works, use `.cursor/skills/evidence-driven-testing` and
+  ship per `AGENTS.md`. Do not skip isolate because the task looks small.
