@@ -175,9 +175,11 @@ Python 3 and FFmpeg.
 - `report.md` is the report: what was tested, environment + exact commit,
   pass/fail per test, caveats. Extend it rather than rewriting from scratch.
 - Post the video + summary as a PR comment (embed in the PR description if
-  it's your PR). Prefer `gh pr comment --attach` / `gh pr edit --attach`
-  (gh 2.99+). Older `gh` cannot attach files. Do not rely on 0x0.st. Confirm
-  the media plays on GitHub before claiming it is posted.
+  it's your PR). For ordinary UI, prefer `gh pr comment --attach` /
+  `gh pr edit --attach` (gh 2.99+). Older `gh` cannot attach files. Do not
+  rely on 0x0.st. Do not attach customer, credential, or payment recordings
+  to a public repo. Confirm the media plays on GitHub before claiming it is
+  posted.
 - Attach the same video to the tracker issue (Linear/Jira) with a one-line result.
 - Send the report + recording to the requester.
 
