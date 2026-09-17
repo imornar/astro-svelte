@@ -127,7 +127,7 @@ gh pr view --json number,body
 
 # Host images on GitHub so they render in the description
 gh pr edit <number> --body-file body.md \
-  `--attach '.artifacts/<task>/<run>/before.png#Before' \
+  --attach '.artifacts/<task>/<run>/before.png#Before' \
   --attach '.artifacts/<task>/<run>/after.png#After'
 ```
 
