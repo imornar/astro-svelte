@@ -1,14 +1,25 @@
 <script>
     let count = 0;
-    function handleDecrease() {
-        count--
+    function handleIncrease() {
+        count++
+    }
+    function handleReset() {
+        count = 0
     }
 </script>
 
 <h1>Svelte is up n' running</h1>
-<button on:click={handleDecrease}>Current count is {count}</button>
+<div class="actions">
+    <button on:click={handleIncrease}>Current count is {count}</button>
+    <button type="button" on:click={handleReset}>Reset</button>
+</div>
 
 <style>
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
 button {
     background: blue;
     cursor: pointer;
